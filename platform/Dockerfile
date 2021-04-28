@@ -3,6 +3,6 @@ WORKDIR /app
 COPY platform.dart .
 RUN dart2native /app/platform.dart -o /app/platform
 
-FROM subfuzion/dart:slim
+FROM atsigncompany/runimage
 COPY --from=0 /app/platform /app/platform
 ENTRYPOINT ["/app/platform"]
