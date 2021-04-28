@@ -1,8 +1,8 @@
 FROM google/dart
 WORKDIR /app
-COPY lscpu.dart .
-RUN dart2native lscpu.dart -o /app/bin/dlscpu
+COPY platform.dart .
+RUN dart2native /app/platform.dart -o /app/platform
 
 FROM subfuzion/dart:slim
-COPY --from=0 /app/bin/dlscpu
-ENTRYPOINT ["/app/bin/dlscpu"]
+COPY --from=0 /app/platform /app/platform
+ENTRYPOINT ["/app/platform"]
