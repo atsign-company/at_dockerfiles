@@ -1,4 +1,4 @@
-FROM google/dart
+FROM atsigncompany/buildimage
 WORKDIR /app
 COPY platform.dart .
 RUN dart2native /app/platform.dart -o /app/platform
