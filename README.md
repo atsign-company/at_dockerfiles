@@ -7,6 +7,8 @@ architectures.
 
 Trivial application that prints out version information, including platform.
 
+Used for testing multi stage, multi arch builds.
+
 ## at-buildimage
 
 Our own version of [google/dart](https://github.com/dart-lang/dart_docker) that
