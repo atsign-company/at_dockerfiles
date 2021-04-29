@@ -31,7 +31,6 @@ jobs:
             atsigncompany/dartshowplatform:GHA${{ github.run_number }}
           platforms: |
             linux/amd64
-            linux/arm/v7
             linux/arm64/v8
       -
         name: Image digest
