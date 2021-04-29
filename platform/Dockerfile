@@ -1,6 +1,6 @@
 FROM atsigncompany/buildimage
 WORKDIR /app
-COPY platform.dart .
+COPY ./platform/platform.dart .
 RUN dart2native /app/platform.dart -o /app/platform
 
 FROM atsigncompany/runimage
