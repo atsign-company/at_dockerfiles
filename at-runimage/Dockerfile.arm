@@ -4,7 +4,7 @@ FROM atsigncompany/buildimage AS dart
 FROM scratch
 # Absolute minimum
 COPY --from=dart /lib/ld-linux-armhf.so.3 /lib/ld-linux-armhf.so.3
-COPY --from=dart /lib//arm-linux-gnueabihf/ld-linux-armhf.so.3 /lib//arm-linux-gnueabihf/ld-linux-armhf.so.3
+COPY --from=dart /lib/arm-linux-gnueabihf/ld-linux-armhf.so.3 /lib/arm-linux-gnueabihf/ld-linux-armhf.so.3
 COPY --from=dart /lib/arm-linux-gnueabihf/libdl.so.2 /lib/arm-linux-gnueabihf/libdl.so.2
 COPY --from=dart /lib/arm-linux-gnueabihf/libc.so.6 /lib/arm-linux-gnueabihf/libc.so.6
 COPY --from=dart /lib/arm-linux-gnueabihf/libm.so.6 /lib/arm-linux-gnueabihf/libm.so.6
