@@ -1,7 +1,10 @@
 # Originally based on subfuzion/dart-docker-slim
+# Using our buildimage as it supports x64|arm|arm64
 FROM atsigncompany/buildimage AS dart
 
-# Do all the copying here first
+# Do all the copying to an output dir here first
+# as the buildimage has a shell that can be used
+# for multi-arch conditionals
 RUN \
   mkdir -p /output/lib && mkdir -p /output/etc && \
   mkdir -p /output/etc/ssl/certs && \
@@ -35,4 +38,5 @@ RUN \
 
 FROM scratch
 COPY --from=dart /output /
+# Is this even really needed, as Docker uses host hosts?
 COPY etc-hosts /etc/hosts
