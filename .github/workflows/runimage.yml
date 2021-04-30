@@ -1,4 +1,4 @@
-name: Docker
+name: Runimage
 
 on:
   workflow_dispatch:
@@ -24,11 +24,11 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          file: ./platform/Dockerfile
+          file: ./at-runimage/Dockerfile
           push: true
           tags: |
-            atsigncompany/dartshowplatform:test
-            atsigncompany/dartshowplatform:GHA${{ github.run_number }}
+            atsigncompany/runimage:test
+            atsigncompany/runimage:GHA${{ github.run_number }}
           platforms: |
             linux/amd64
             linux/arm64/v8

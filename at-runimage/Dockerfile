@@ -39,4 +39,4 @@ RUN \
 FROM scratch
 COPY --from=dart /output /
 # Is this even really needed, as Docker uses host hosts?
-COPY etc-hosts /etc/hosts
+COPY ./at-runimage/etc-hosts /etc/hosts
