@@ -17,7 +17,7 @@ RUN \
     cp /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 \
        /output/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 ;; \
     *) ARCH="x86_64-linux-gnu" ; \
-    mkdir -p /output/lib/$ARCH ; \
+    mkdir -p /output/lib/$ARCH ; mkdir -p /output/lib64/ ; \
     cp /lib64/ld-linux-x86-64.so.2 /output/lib64/ld-linux-x86-64.so.2 ;; \
   esac && \
   cp /lib/$ARCH/libdl.so.2 /output/lib/$ARCH/libdl.so.2 && \
