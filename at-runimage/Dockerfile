@@ -6,17 +6,18 @@ RUN \
   mkdir -p /output/lib && mkdir -p /output/etc && \
   mkdir -p /output/etc/ssl/certs && \
   mkdir -p /output/usr/share/ca-certificates && \
-  case "$(uname -m)" in armv7l | armv7) ARCH="arm-linux-gnueabihf" ; \
+  case "$(uname -m)" in \
+   armv7l | armv7) ARCH="arm-linux-gnueabihf" ; \
     mkdir -p /output/lib/$ARCH ; \
     cp /lib/ld-linux-armhf.so.3 /output/lib/ld-linux-armhf.so.3 ; \
     cp /lib/arm-linux-gnueabihf/ld-linux-armhf.so.3 \
        /output/lib/arm-linux-gnueabihf/ld-linux-armhf.so.3 ;; \
-    aarch64) ARCH="aarch64-linux-gnu" ; \
+   aarch64) ARCH="aarch64-linux-gnu" ; \
     mkdir -p /output/lib/$ARCH ; \
     cp /lib/ld-linux-aarch64.so.1 /output/lib/ld-linux-aarch64.so.1 ; \
     cp /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 \
        /output/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 ;; \
-    *) ARCH="x86_64-linux-gnu" ; \
+   *) ARCH="x86_64-linux-gnu" ; \
     mkdir -p /output/lib/$ARCH ; mkdir -p /output/lib64/ ; \
     cp /lib64/ld-linux-x86-64.so.2 /output/lib64/ld-linux-x86-64.so.2 ;; \
   esac && \
