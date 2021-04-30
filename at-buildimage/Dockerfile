@@ -5,7 +5,7 @@ ARG DART_VERSION="2.12.4"
 WORKDIR /tmp/
 
 RUN \
-  echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections && \
+  echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
   apt-get -q update && apt-get install --no-install-recommends -y -q \
     gnupg2 curl git ca-certificates unzip openssh-client && \
   case "$(uname -m)" in armv7l | armv7) ARCH="arm";; aarch64) ARCH="arm64";; *) ARCH="x64";; esac && \
