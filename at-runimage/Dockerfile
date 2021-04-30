@@ -1,6 +1,6 @@
 # Originally based on subfuzion/dart-docker-slim
 # Using our buildimage as it supports x64|arm|arm64
-FROM atsigncompany/buildimage AS dart
+FROM atsigncompany/buildimage:test AS dart
 
 # Do all the copying to an output dir here first
 # as the buildimage has a shell that can be used
