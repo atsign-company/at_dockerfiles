@@ -47,3 +47,7 @@ sudo docker manifest create atsigncompany/runimage:latest \
   
 sudo docker manifest push atsigncompany/runimage:2.12.4
 ```
+
+## License
+
+The contents of this repository are licensed using the [Apache 2.0 License](LICENSE)
