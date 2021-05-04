@@ -9,6 +9,10 @@ Trivial application that prints out version information, including platform.
 
 Used for testing multi stage, multi arch builds.
 
+```bash
+sudo docker build -t atsigncompany/dartshowplatform -f platform/Dockerfile .
+```
+
 ## at-buildimage
 
 Our own version of [google/dart](https://github.com/dart-lang/dart_docker) that
@@ -16,10 +20,10 @@ can run on multiple architectures (x86_64, armv7, arm64).
 
 Crucially doesn't depend on apt to install dart (as packages not available for Arm)
 
-Takes two build time ARGs - DART_VERSION and ARCH [x64:arm:arm64]:
+Takes a build time ARG - DART_VERSION
 
 ```bash
-sudo docker build -t atsigncompany/buildimage --build-arg DART_VERSION=2.12.4 --build-arg ARCH=arm .
+sudo docker build -t atsigncompany/buildimage --build-arg DART_VERSION=2.12.4 -f at-buildimage/Dockerfile .
 ```
 
 ## at-runimage
@@ -27,10 +31,10 @@ sudo docker build -t atsigncompany/buildimage --build-arg DART_VERSION=2.12.4 --
 Our own version of [subfuzion/dart-docker-slim](https://github.com/subfuzion/dart-docker-slim)
 that can run on multiple architectures (x86_64, armv7, arm64).
 
-There are separate Dockerfiles for each architecture as each COPYs completely different libraries.
-
 ```bash
-sudo docker build -t atsigncompany/runimage:2.12.4-arm -f Dockerfile.arm .
+DART_VERSION="2.12.4"
+ARCH="arm64"
+sudo docker build -t atsigncompany/runimage:$DART_VERSION-$ARCH -f at-runimage/Dockerfile .
 ```
 
 ### multi-arch manifest creation and push
