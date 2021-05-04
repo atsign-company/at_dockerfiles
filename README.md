@@ -27,6 +27,8 @@ Expected output:
 2.12.4 (stable) (Thu Apr 15 12:26:53 2021 +0200) on "linux_arm64"
 ```
 
+Available on Dockerhub as [atsigncompany/dartshowplatform](https://hub.docker.com/r/atsigncompany/dartshowplatform)
+
 ## at-buildimage
 
 Our own version of [google/dart](https://github.com/dart-lang/dart_docker) that
@@ -42,6 +44,8 @@ Manual build:
 sudo docker build -t atsigncompany/buildimage --build-arg DART_VERSION=2.12.4 -f at-buildimage/Dockerfile .
 ```
 
+Available on Dockerhub as [atsigncompany/buildimage](https://hub.docker.com/r/atsigncompany/buildimage)
+
 ## at-runimage
 
 Our own version of [subfuzion/dart-docker-slim](https://github.com/subfuzion/dart-docker-slim)
@@ -54,6 +58,8 @@ DART_VERSION="2.12.4"
 ARCH="arm64"
 sudo docker build -t atsigncompany/runimage:$DART_VERSION-$ARCH -f at-runimage/Dockerfile .
 ```
+
+Available on Dockerhub as [atsigncompany/runimage](https://hub.docker.com/r/atsigncompany/runimage)
 
 ### multi-arch manifest creation and push
 
