@@ -28,6 +28,7 @@ jobs:
           push: true
           tags: |
             atsigncompany/dartshowplatform:automated
+            atsigncompany/dartshowplatform:latest
             atsigncompany/dartshowplatform:GHA${{ github.run_number }}
           platforms: |
             linux/amd64
