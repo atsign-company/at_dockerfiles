@@ -3,14 +3,14 @@
 Repo for Dockerfiles to create build, run and test images across multiple 
 architectures.
 
-## platform
+## dartshowplatform
 
 Trivial application that prints out version information, including platform.
 
 Used for testing multi stage, multi arch builds.
 
 ```bash
-sudo docker build -t atsigncompany/dartshowplatform -f platform/Dockerfile .
+sudo docker build -t atsigncompany/dartshowplatform -f dartshowplatform/Dockerfile .
 ```
 
 ## at-buildimage
