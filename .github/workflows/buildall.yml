@@ -3,7 +3,7 @@ name: BuildAll
 on:
   workflow_dispatch:
     inputs:
-      dartersion:
+      dartversion:
         description: 'Dart SDK stable version'
         required: true
         default: '2.13.0'
