@@ -81,14 +81,15 @@ Available on Dockerhub as [atsigncompany/dartshowplatform](https://hub.docker.co
 
 ## Automation
 
-There are three GitHub Actions workflows:
+There are four GitHub Actions workflows:
 
-1. [buildimage.yml](.github/workflows/buildimage.yml) uses docker_build to build and push at-buildimage
-for amd64 and arm64 platform.
-2. [runimage.yml](.github/workflows/runimage.yml) uses docker_build to build and push at-runimage
-for amd64 and arm64 platform.
-3. [dartshowplatform.yml](.github/workflows/dartshowplatform.yml) uses docker_build to build and push dartshowplatform
-for amd64 and arm64 platform.
+1. [buildimage.yml](.github/workflows/buildimage.yml) uses docker_build to 
+build and push at-buildimage for amd64 and arm64 platform.
+2. [runimage.yml](.github/workflows/runimage.yml) uses docker_build to build
+and push at-runimage for amd64 and arm64 platform.
+3. [dartshowplatform.yml](.github/workflows/dartshowplatform.yml) uses
+docker_build to build and push dartshowplatform for amd64 and arm64 platform.
+4. [buildall.yml](.github/workflows/buildall.yml) combines all three.
 
 ### Why no armv7?
 
