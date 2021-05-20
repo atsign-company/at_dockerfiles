@@ -3,6 +3,54 @@
 Repo for Dockerfiles to create build, run and test images across multiple 
 architectures.
 
+## at-buildimage
+
+Our own version of [google/dart](https://github.com/dart-lang/dart_docker) that
+can run on multiple architectures (x86_64, armv7, arm64).
+
+Crucially doesn't depend on apt to install dart (as packages not available for Arm)
+
+Takes a build time ARG - DART_VERSION
+
+Manual build:
+
+```bash
+DART_VERSION="2.12.4"
+ARCH="arm"
+sudo docker build -t atsigncompany/buildimage:$"DART_VERSION"-$"ARCH" \
+--build-arg DART_VERSION=$"DART_VERSION" -f at-buildimage/Dockerfile .
+```
+
+Available on Dockerhub as [atsigncompany/buildimage](https://hub.docker.com/r/atsigncompany/buildimage)
+
+## at-runimage
+
+Our own version of [subfuzion/dart-docker-slim](https://github.com/subfuzion/dart-docker-slim)
+that can run on multiple architectures (x86_64, armv7, arm64).
+
+Manual build:
+
+```bash
+DART_VERSION="2.12.4"
+ARCH="arm"
+sudo docker build -t atsigncompany/runimage:$"DART_VERSION"-$"ARCH" \
+-f at-runimage/Dockerfile .
+```
+
+Available on Dockerhub as [atsigncompany/runimage](https://hub.docker.com/r/atsigncompany/runimage)
+
+### multi-arch manifest creation and push
+
+```bash
+DART_VERSION="2.12.4"
+sudo docker manifest create atsigncompany/runimage:$"DART_VERSION" \
+  --amend atsigncompany/runimage:$"DART_VERSION"-arm \
+  --amend atsigncompany/runimage:$"DART_VERSION"-arm64 \
+  --amend atsigncompany/runimage:$"DART_VERSION"-x64
+  
+sudo docker manifest push atsigncompany/runimage:$"DART_VERSION"
+```
+
 ## dartshowplatform
 
 Trivial application that prints out version information, including platform.
@@ -18,7 +66,7 @@ sudo docker build -t atsigncompany/dartshowplatform -f dartshowplatform/Dockerfi
 Run:
 
 ```bash
-sudo docker run -it  atsigncompany/dartshowplatform:automated
+sudo docker run -it atsigncompany/dartshowplatform:automated
 ```
 
 Expected output:
@@ -28,49 +76,6 @@ Expected output:
 ```
 
 Available on Dockerhub as [atsigncompany/dartshowplatform](https://hub.docker.com/r/atsigncompany/dartshowplatform)
-
-## at-buildimage
-
-Our own version of [google/dart](https://github.com/dart-lang/dart_docker) that
-can run on multiple architectures (x86_64, armv7, arm64).
-
-Crucially doesn't depend on apt to install dart (as packages not available for Arm)
-
-Takes a build time ARG - DART_VERSION
-
-Manual build:
-
-```bash
-sudo docker build -t atsigncompany/buildimage --build-arg DART_VERSION=2.12.4 -f at-buildimage/Dockerfile .
-```
-
-Available on Dockerhub as [atsigncompany/buildimage](https://hub.docker.com/r/atsigncompany/buildimage)
-
-## at-runimage
-
-Our own version of [subfuzion/dart-docker-slim](https://github.com/subfuzion/dart-docker-slim)
-that can run on multiple architectures (x86_64, armv7, arm64).
-
-Manual build:
-
-```bash
-DART_VERSION="2.12.4"
-ARCH="arm64"
-sudo docker build -t atsigncompany/runimage:$DART_VERSION-$ARCH -f at-runimage/Dockerfile .
-```
-
-Available on Dockerhub as [atsigncompany/runimage](https://hub.docker.com/r/atsigncompany/runimage)
-
-### multi-arch manifest creation and push
-
-```bash
-sudo docker manifest create atsigncompany/runimage:latest \
-  --amend atsigncompany/runimage:2.12.4-arm \
-  --amend atsigncompany/runimage:2.12.4-arm64 \
-  --amend atsigncompany/runimage:2.12.4-x64
-  
-sudo docker manifest push atsigncompany/runimage:2.12.4
-```
 
 ## Automation
 

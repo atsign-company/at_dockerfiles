@@ -48,7 +48,7 @@ jobs:
           push: true
           tags: |
             atsigncompany/runimage:automated
-            atsigncompany/buildimage:${{ github.event.inputs.dartversion }}
+            atsigncompany/runimage:${{ github.event.inputs.dartversion }}
             atsigncompany/runimage:GHA_${{ github.run_number }}
           platforms: |
             linux/amd64
@@ -63,7 +63,7 @@ jobs:
           tags: |
             atsigncompany/dartshowplatform:automated
             atsigncompany/dartshowplatform:latest
-            atsigncompany/buildimage:${{ github.event.inputs.dartversion }}
+            atsigncompany/dartshowplatform:${{ github.event.inputs.dartversion }}
             atsigncompany/dartshowplatform:GHA_${{ github.run_number }}
           platforms: |
             linux/amd64
