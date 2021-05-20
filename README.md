@@ -99,10 +99,6 @@ There are presently two issues with automating builds for armv7:
 
 The Dockerfiles do work when run on a Raspberry Pi.
 
-## Todo
-
-Add parameters to automation for DART_VERSION to be passed in.
-
 ## License
 
 The contents of this repository are licensed using the [Apache 2.0 License](LICENSE)
