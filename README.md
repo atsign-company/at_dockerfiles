@@ -43,8 +43,9 @@ Manual build:
 
 ```bash
 DART_VERSION="2.12.4"
-sudo docker build -t atsigncompany/dartshowplatform \
---build-arg IMAGE_TAG="$DART_VERSION" -f dartshowplatform/Dockerfile .
+ARCH="arm"
+sudo docker build -t atsigncompany/dartshowplatform:"$DART_VERSION-$ARCH" \
+--build-arg IMAGE_TAG="$DART_VERSION-$ARCH" -f dartshowplatform/Dockerfile .
 ```
 
 Run:
