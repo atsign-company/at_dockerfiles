@@ -10,7 +10,7 @@ WORKDIR /root
 
 # Create a minimal runtime environment for executing AOT-compiled Dart code
 # with the smallest possible image size.
-# usage: COPY --from=dart:xxx /runtime/ /
+# usage: COPY --from=atsigncompany/buildimage /runtime/ /
 # uses hard links here to save space
 
 RUN set -eux; \
