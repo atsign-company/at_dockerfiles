@@ -71,7 +71,7 @@ Run:
 sudo docker run -it atsigncompany/dartshowplatform:automated
 ```
 
-Expected output:
+Example output:
 
 ```log
 2.12.4 (stable) (Thu Apr 15 12:26:53 2021 +0200) on "linux_arm64"
