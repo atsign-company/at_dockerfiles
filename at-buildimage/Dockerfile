@@ -61,6 +61,4 @@ RUN set -eux; \
     URL="$BASEURL/$DART_CHANNEL/release/$DART_VERSION/sdk/$SDK"; \
     echo "SDK: $URL" >> dart_setup.log ; \
     curl -fLO "$URL"; \
-    echo "{{DART_SHA256}} *$SDK" \
-    | sha256sum --check --status --strict -; \
     unzip "$SDK" && mv dart-sdk "$DART_SDK" && rm "$SDK";
