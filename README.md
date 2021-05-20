@@ -17,8 +17,8 @@ Manual build:
 ```bash
 DART_VERSION="2.12.4"
 ARCH="arm"
-sudo docker build -t atsigncompany/buildimage:$"DART_VERSION"-$"ARCH" \
---build-arg DART_VERSION=$"DART_VERSION" -f at-buildimage/Dockerfile .
+sudo docker build -t atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" \
+--build-arg DART_VERSION="$DART_VERSION" -f at-buildimage/Dockerfile .
 ```
 
 Available on Dockerhub as [atsigncompany/buildimage](https://hub.docker.com/r/atsigncompany/buildimage)
@@ -33,8 +33,8 @@ Manual build:
 ```bash
 DART_VERSION="2.12.4"
 ARCH="arm"
-sudo docker build -t atsigncompany/runimage:$"DART_VERSION"-$"ARCH" \
--f at-runimage/Dockerfile .
+sudo docker build -t atsigncompany/runimage:"$DART_VERSION"-"$ARCH" \
+--build-arg IMAGE_TAG="$DART_VERSION" -f at-runimage/Dockerfile .
 ```
 
 Available on Dockerhub as [atsigncompany/runimage](https://hub.docker.com/r/atsigncompany/runimage)
@@ -43,12 +43,12 @@ Available on Dockerhub as [atsigncompany/runimage](https://hub.docker.com/r/atsi
 
 ```bash
 DART_VERSION="2.12.4"
-sudo docker manifest create atsigncompany/runimage:$"DART_VERSION" \
-  --amend atsigncompany/runimage:$"DART_VERSION"-arm \
-  --amend atsigncompany/runimage:$"DART_VERSION"-arm64 \
-  --amend atsigncompany/runimage:$"DART_VERSION"-x64
+sudo docker manifest create atsigncompany/runimage:"$DART_VERSION" \
+  --amend atsigncompany/runimage:"$DART_VERSION"-arm \
+  --amend atsigncompany/runimage:"$DART_VERSION"-arm64 \
+  --amend atsigncompany/runimage:"$DART_VERSION"-x64
   
-sudo docker manifest push atsigncompany/runimage:$"DART_VERSION"
+sudo docker manifest push atsigncompany/runimage:"$DART_VERSION"
 ```
 
 ## dartshowplatform
@@ -60,7 +60,9 @@ Used for testing multi stage, multi arch builds.
 Manual build:
 
 ```bash
-sudo docker build -t atsigncompany/dartshowplatform -f dartshowplatform/Dockerfile .
+DART_VERSION="2.12.4"
+sudo docker build -t atsigncompany/dartshowplatform \
+--build-arg IMAGE_TAG="$DART_VERSION" -f dartshowplatform/Dockerfile .
 ```
 
 Run:
