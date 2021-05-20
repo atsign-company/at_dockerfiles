@@ -54,7 +54,7 @@ RUN set -eux; \
         mkdir -p "/runtime$dir"; \
         cp --archive --link --dereference --no-target-directory "$f" "/runtime$f"; \
     done; \
-    SDKARCH=$(case "$(uname -m)" in amd64) echo "x64";; armv7l) echo "arm";;\
+    SDKARCH=$(case "$(uname -m)" in x86_64) echo "x64";; armv7l) echo "arm";;\
      aarch64) echo "arm64";; esac;); \
     SDK="dartsdk-linux-$SDKARCH-release.zip"; \
     BASEURL="https://storage.googleapis.com/dart-archive/channels"; \
