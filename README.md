@@ -96,7 +96,8 @@ docker_build to build and push dartshowplatform for amd64 and arm64 platform.
 There are presently two issues with automating builds for armv7:
 
 1. `buildimage.yml` fails to make a correct TLS connection to download Dart SDK.
-2. `dartshowplatform.yml` gets `Unrecognized ARM CPU architecture.` coming from `dart2native` not being happy about the QEMU environment it finds itself in.
+2. `dartshowplatform.yml` gets `Unrecognized ARM CPU architecture.` coming from
+`dart compile` not being happy about the QEMU environment it finds itself in.
 
 The Dockerfiles do work when run on a Raspberry Pi.
 
