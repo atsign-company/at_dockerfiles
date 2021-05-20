@@ -5,12 +5,10 @@ architectures.
 
 ## at-buildimage
 
-Our own version of [google/dart](https://github.com/dart-lang/dart_docker) that
+Our own version of [dart](https://hub.docker.com/_/dart) that
 can run on multiple architectures (x86_64, armv7, arm64).
 
-Crucially doesn't depend on apt to install dart (as packages not available for Arm)
-
-Takes a build time ARG - DART_VERSION
+Takes a build time ARG - DART_VERSION (defaults to 2.13.0)
 
 Manual build:
 
@@ -23,32 +21,16 @@ sudo docker build -t atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" \
 
 Available on Dockerhub as [atsigncompany/buildimage](https://hub.docker.com/r/atsigncompany/buildimage)
 
-## at-runimage
-
-Our own version of [subfuzion/dart-docker-slim](https://github.com/subfuzion/dart-docker-slim)
-that can run on multiple architectures (x86_64, armv7, arm64).
-
-Manual build:
-
-```bash
-DART_VERSION="2.12.4"
-ARCH="arm"
-sudo docker build -t atsigncompany/runimage:"$DART_VERSION"-"$ARCH" \
---build-arg IMAGE_TAG="$DART_VERSION" -f at-runimage/Dockerfile .
-```
-
-Available on Dockerhub as [atsigncompany/runimage](https://hub.docker.com/r/atsigncompany/runimage)
-
 ### multi-arch manifest creation and push
 
 ```bash
 DART_VERSION="2.12.4"
-sudo docker manifest create atsigncompany/runimage:"$DART_VERSION" \
-  --amend atsigncompany/runimage:"$DART_VERSION"-arm \
-  --amend atsigncompany/runimage:"$DART_VERSION"-arm64 \
-  --amend atsigncompany/runimage:"$DART_VERSION"-x64
+sudo docker manifest create atsigncompany/buildimage:"$DART_VERSION" \
+  --amend atsigncompany/buildimage:"$DART_VERSION"-arm \
+  --amend atsigncompany/buildimage:"$DART_VERSION"-arm64 \
+  --amend atsigncompany/buildimage:"$DART_VERSION"-x64
   
-sudo docker manifest push atsigncompany/runimage:"$DART_VERSION"
+sudo docker manifest push atsigncompany/buildimage:"$DART_VERSION"
 ```
 
 ## dartshowplatform
@@ -81,15 +63,13 @@ Available on Dockerhub as [atsigncompany/dartshowplatform](https://hub.docker.co
 
 ## Automation
 
-There are four GitHub Actions workflows:
+There are three GitHub Actions workflows:
 
 1. [buildimage.yml](.github/workflows/buildimage.yml) uses docker_build to 
 build and push at-buildimage for amd64 and arm64 platform.
-2. [runimage.yml](.github/workflows/runimage.yml) uses docker_build to build
-and push at-runimage for amd64 and arm64 platform.
-3. [dartshowplatform.yml](.github/workflows/dartshowplatform.yml) uses
+2. [dartshowplatform.yml](.github/workflows/dartshowplatform.yml) uses
 docker_build to build and push dartshowplatform for amd64 and arm64 platform.
-4. [buildall.yml](.github/workflows/buildall.yml) combines all three.
+3. [buildall.yml](.github/workflows/buildall.yml) combines both.
 
 ### Why no armv7?
 
