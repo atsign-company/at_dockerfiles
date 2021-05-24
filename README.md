@@ -8,6 +8,8 @@ architectures.
 Our own version of [dart](https://hub.docker.com/_/dart) that
 can run on multiple architectures (x86_64, armv7, arm64).
 
+Also adds git so that `dart pub get` works.
+
 Takes a build time ARG - DART_VERSION (defaults to 2.13.0)
 
 Manual build:
