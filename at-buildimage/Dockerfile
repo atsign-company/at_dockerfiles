@@ -21,6 +21,7 @@ RUN set -eux; \
         openssh-client \
         unzip \
         dnsutils \
+        git \
     ; \
     rm -rf /var/lib/apt/lists/*; \
     case "$(uname -m)" in \
