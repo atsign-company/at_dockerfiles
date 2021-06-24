@@ -35,9 +35,11 @@ RUN set -eux; \
       cp /lib/ld-linux-aarch64.so.1 /runtime/lib/ld-linux-aarch64.so.1 ; \
       cp /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 \
          /runtime/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 ;; \
-     *) ARCH="x86_64-linux-gnu" ; \
+     x86_64) ARCH="x86_64-linux-gnu" ; \
       mkdir -p /runtime/lib64/ ; \
       cp /lib64/ld-linux-x86-64.so.2 /runtime/lib64/ld-linux-x86-64.so.2 ;; \
+     *) echo "Unsupported architecture" ; \
+      exit 5;; \
     esac && \
     for f in \
         /etc/nsswitch.conf \
