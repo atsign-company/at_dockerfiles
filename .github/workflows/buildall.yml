@@ -93,11 +93,11 @@ jobs:
             export DART_VERSION="${{ github.event.inputs.dartversion }}"
             cd /home/pi/git/github.com/atsign-company/at_dockerfiles
             git pull
-            cd at-buildimage
-            docker build -t atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" .
+            docker build -t atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" \
+              --build-arg DART_VERSION="$DART_VERSION" -f at-buildimage/Dockerfile .
             docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
-            cd ../dartshowplatform
-            docker build -t atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH" .
+            docker build -t atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH" \
+              --build-arg IMAGE_TAG="$DART_VERSION" -f dartshowplatform/Dockerfile .
             docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
 
       - name: Create and push multi-arch manifests
