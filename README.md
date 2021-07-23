@@ -66,23 +66,21 @@ Available on Dockerhub as [atsigncompany/dartshowplatform](https://hub.docker.co
 
 ## Automation
 
-There are three GitHub Actions workflows:
+There's a single GitHub Actions workflows:
 
-1. [buildimage.yml](.github/workflows/buildimage.yml) uses docker_build to 
-build and push at-buildimage for amd64 and arm64 platform.
-2. [dartshowplatform.yml](.github/workflows/dartshowplatform.yml) uses
-docker_build to build and push dartshowplatform for amd64 and arm64 platform.
-3. [buildall.yml](.github/workflows/buildall.yml) combines both.
+1. [buildall.yml](.github/workflows/buildall.yml) uses docker_build to 
+build and push at-buildimage and dartshowplatform for amd64 and arm64
+platforms. Then runs an arm build on a Raspberry Pi before bringing
+all the builds together into a set of multi architecture manifests.
 
-### Why no armv7?
+### Why isn't armv7 done in docker_build?
 
-There are presently two issues with automating builds for armv7:
+There are presently two issues with automating builds for armv7 in the buildx
+action:
 
 1. `buildimage.yml` fails to make a correct TLS connection to download Dart SDK.
 2. `dartshowplatform.yml` gets `Unrecognized ARM CPU architecture.` coming from
 `dart compile` not being happy about the QEMU environment it finds itself in.
-
-The Dockerfiles do work when run on a Raspberry Pi.
 
 ## License
 
