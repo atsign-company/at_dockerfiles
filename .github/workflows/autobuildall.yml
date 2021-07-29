@@ -18,7 +18,7 @@ jobs:
           curl -s $DDURL | jq -r .stable.version > DART_STABLE_VERSION
           if [ -z "$(git status --porcelain)" ]; then 
             echo 'No new stable release of Dart'
-            exit 0
+            exit 1
           else
             echo "DART_VERSION=$(cat DART_STABLE_VERSION)" >> $GITHUB_ENV
             git config --global user.name 'Label Action'
