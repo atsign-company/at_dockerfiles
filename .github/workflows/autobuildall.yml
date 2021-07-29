@@ -1,0 +1,137 @@
+name: AutoBuildAll
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '42 7 * * *' # At 0742 each day
+
+jobs:
+  build_multi_arch_images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v2.3.4 # checkout the repository content to github runner.
+
+      - name: Check stable version
+        run: |
+          DDURL="https://raw.githubusercontent.com/dart-lang/dart-docker/main/versions.json"
+          curl -s $DDURL | jq -r .stable.version > DART_STABLE_VERSION
+          if [ -z "$(git status --porcelain)" ]; then 
+            echo 'No new stable release of Dart'
+            exit 0
+          else
+            echo "DART_VERSION=$(cat DART_STABLE_VERSION)" >> $GITHUB_ENV
+            git config --global user.name 'Label Action'
+            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -am "New Dart stable version $DART_VERSION"
+            git push
+          fi          
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1.2.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1.5.1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1.10.0 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push buildimage
+        id: docker_build1
+        uses: docker/build-push-action@v2.6.1
+        with:
+          file: ./at-buildimage/Dockerfile
+          build-args: DART_VERSION=$DART_VERSION
+          push: true
+          tags: |
+            atsigncompany/buildimage:automated
+            atsigncompany/buildimage:$DART_VERSION
+            atsigncompany/buildimage:GHA_${{ github.run_number }}
+          platforms: |
+            linux/amd64
+            linux/arm64/v8
+
+      - name: Build and push dartshowplatform
+        id: docker_build3
+        uses: docker/build-push-action@v2.6.1
+        with:
+          file: ./dartshowplatform/Dockerfile
+          push: true
+          tags: |
+            atsigncompany/dartshowplatform:automated
+            atsigncompany/dartshowplatform:$DART_VERSION
+            atsigncompany/dartshowplatform:GHA_${{ github.run_number }}
+          platforms: |
+            linux/amd64
+            linux/arm64/v8
+
+      - name: Create x64 labels
+        env:
+          ARCH: x64
+        run: |
+          docker pull atsigncompany/buildimage:"$DART_VERSION"
+          docker pull atsigncompany/dartshowplatform:"$DART_VERSION"
+          docker tag atsigncompany/buildimage:"$DART_VERSION" atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
+          docker tag atsigncompany/dartshowplatform:"$DART_VERSION" atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
+          docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
+          docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
+
+      - name: Create arm64 labels
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: "cicd1.atsign.wtf"
+          username: ubuntu
+          key: ${{ secrets.CICD_SSH_KEY }}
+          script: |
+            export ARCH="arm64"
+            export DART_VERSION="${{ github.event.inputs.dartversion }}"
+            docker pull atsigncompany/buildimage:"$DART_VERSION"
+            docker pull atsigncompany/dartshowplatform:"$DART_VERSION"
+            docker tag atsigncompany/buildimage:"$DART_VERSION" atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
+            docker tag atsigncompany/dartshowplatform:"$DART_VERSION" atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
+            docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
+            docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
+
+      - name: Create arm images
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: "70.167.220.138"
+          username: pi
+          key: ${{ secrets.CICD_SSH_KEY }}
+          script: |
+            export ARCH="arm"
+            export DART_VERSION="${{ github.event.inputs.dartversion }}"
+            cd /home/pi/git/github.com/atsign-company/at_dockerfiles
+            git pull
+            docker build -t atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" \
+              --build-arg DART_VERSION="$DART_VERSION" -f at-buildimage/Dockerfile .
+            docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
+            docker build -t atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH" \
+              --build-arg IMAGE_TAG="$DART_VERSION" -f dartshowplatform/Dockerfile .
+            docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
+
+      - name: Create and push multi-arch manifests
+        run: |
+          docker manifest create atsigncompany/buildimage:"$DART_VERSION" \
+            --amend atsigncompany/buildimage:"$DART_VERSION"-arm \
+            --amend atsigncompany/buildimage:"$DART_VERSION"-arm64 \
+            --amend atsigncompany/buildimage:"$DART_VERSION"-x64
+          docker manifest push atsigncompany/buildimage:"$DART_VERSION"
+          docker manifest create atsigncompany/buildimage:latest \
+            --amend atsigncompany/buildimage:"$DART_VERSION"-arm \
+            --amend atsigncompany/buildimage:"$DART_VERSION"-arm64 \
+            --amend atsigncompany/buildimage:"$DART_VERSION"-x64
+          docker manifest push atsigncompany/buildimage:latest
+          docker manifest create atsigncompany/dartshowplatform:"$DART_VERSION" \
+            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-arm \
+            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-arm64 \
+            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-x64
+          docker manifest push atsigncompany/dartshowplatform:"$DART_VERSION"
+          docker manifest create atsigncompany/dartshowplatform:latest \
+            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-arm \
+            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-arm64 \
+            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-x64
+          docker manifest push atsigncompany/dartshowplatform:latest
