@@ -6,7 +6,7 @@ on:
     - cron: '42 7 * * *' # At 0742 each day
 
 jobs:
-  build_multi_arch_images:
+  check_for_new_stable:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo content
@@ -18,15 +18,21 @@ jobs:
           curl -s $DDURL | jq -r .stable.version > DART_STABLE_VERSION
           if [ -z "$(git status --porcelain)" ]; then 
             echo 'No new stable release of Dart'
-            exit 1
+            exit 0
           else
-            echo "DART_VERSION=$(cat DART_STABLE_VERSION)" >> $GITHUB_ENV
-            git config --global user.name 'Label Action'
+            DART_VERSION=$(cat DART_STABLE_VERSION)
+            echo "DART_VERSION=$DART_VERSION" >> $GITHUB_ENV
+            git config --global user.name 'Release Check Action'
             git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git commit -am "New Dart stable version $DART_VERSION"
             git push
           fi          
-
+  
+  build_multi_arch_images:
+    needs: [check_for_new_stable]
+    if: ${{ env.DART_VERSION != '' }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1.2.0
 
