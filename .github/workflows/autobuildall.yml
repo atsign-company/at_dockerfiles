@@ -99,7 +99,7 @@ jobs:
           key: ${{ secrets.CICD_SSH_KEY }}
           script: |
             export ARCH="arm64"
-            export DART_VERSION="${{ github.event.inputs.dartversion }}"
+            export DART_VERSION="${{ needs.check_for_new_stable.outputs.dartversion }}"
             docker pull atsigncompany/buildimage:"$DART_VERSION"
             docker pull atsigncompany/dartshowplatform:"$DART_VERSION"
             docker tag atsigncompany/buildimage:"$DART_VERSION" atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
@@ -115,7 +115,7 @@ jobs:
           key: ${{ secrets.CICD_SSH_KEY }}
           script: |
             export ARCH="arm"
-            export DART_VERSION="${{ github.event.inputs.dartversion }}"
+            export DART_VERSION="${{ needs.check_for_new_stable.outputs.dartversion }}"
             cd /home/pi/git/github.com/atsign-company/at_dockerfiles
             git pull
             docker build -t atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" \
