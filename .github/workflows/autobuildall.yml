@@ -94,7 +94,7 @@ jobs:
       - name: Create arm64 labels
         uses: appleboy/ssh-action@v0.1.4
         with:
-          host: "cicd1.atsign.wtf"
+          host: "arm64cicd.atsign.wtf"
           username: ubuntu
           key: ${{ secrets.CICD_SSH_KEY }}
           script: |
@@ -110,7 +110,7 @@ jobs:
       - name: Create arm images
         uses: appleboy/ssh-action@v0.1.4
         with:
-          host: "70.167.220.138"
+          host: "arm32cicd.atsign.wtf"
           username: pi
           key: ${{ secrets.CICD_SSH_KEY }}
           script: |
