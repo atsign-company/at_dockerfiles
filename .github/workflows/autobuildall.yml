@@ -129,6 +129,9 @@ jobs:
             sudo docker build -t atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" \
               --build-arg DART_VERSION="$DART_VERSION" -f at-buildimage/Dockerfile .
             sudo docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
+            sudo docker tag atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" \
+              atsigncompany/buildimage:automated
+            sudo docker push atsigncompany/buildimage:automated
             sudo docker build -t atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH" \
               --build-arg IMAGE_TAG="$DART_VERSION" -f dartshowplatform/Dockerfile .
             sudo docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
@@ -144,7 +147,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          
+
       - name: Create and push multi-arch manifests
         run: |
           docker manifest create atsigncompany/buildimage:"$DART_VERSION" \
