@@ -107,11 +107,19 @@ jobs:
             sudo docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
             sudo docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
 
+  build_armv7_image:
+    needs: [check_for_new_stable]
+    if: ${{ needs.check_for_new_stable.outputs.dartversion != 'NOTNEW' }}
+    env:
+      DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
+    runs-on: ubuntu-latest
+    steps:            
       - name: Create arm images
         uses: appleboy/ssh-action@v0.1.4
         with:
           host: "arm32cicd.atsign.wtf"
           username: pi
+          command_timeout: 30m
           key: ${{ secrets.CICD_SSH_KEY }}
           script: |
             export ARCH="arm"
@@ -125,6 +133,18 @@ jobs:
               --build-arg IMAGE_TAG="$DART_VERSION" -f dartshowplatform/Dockerfile .
             sudo docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
 
+  tag_multi_arch_images:
+    needs: [check_for_new_stable, build_multi_arch_images, build_armv7_image]
+    env:
+      DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1.10.0 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
       - name: Create and push multi-arch manifests
         run: |
           docker manifest create atsigncompany/buildimage:"$DART_VERSION" \
