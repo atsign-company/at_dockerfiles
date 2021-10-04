@@ -167,3 +167,10 @@ jobs:
             --amend atsigncompany/dartshowplatform:"$DART_VERSION"-arm64 \
             --amend atsigncompany/dartshowplatform:"$DART_VERSION"-x64
           docker manifest push atsigncompany/dartshowplatform:latest
+
+      - name: Google Chat Notification
+        uses: Co-qn/google-chat-notification@releases/v1
+        with:
+          name: New images build for Dart SDK ${{ env.DART_VERSION }}
+          url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
+          status: ${{ job.status }}
