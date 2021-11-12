@@ -1,7 +1,16 @@
-# at_dockerfiles
+# at_dockerfiles is deprecated
 
-Repo for Dockerfiles to create build, run and test images across multiple 
-architectures.
+We no longer need a repo for Dockerfiles to create build, run and test images
+across multiple architectures as the
+[official Dart Docker image](https://github.com/dart-lang/dart-docker) now
+[supports multiple architectures](https://github.com/dart-lang/dart-docker/pull/53).
+
+We have switched to using `FROM dart` rather than 
+`FROM atsigncompany/buildimage` for our own projects.
+
+For now, the automation will be left in place to keep the buildimage updated.
+
+Here's the history of what this did when we still needed it:
 
 ## at-buildimage
 

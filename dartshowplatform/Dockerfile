@@ -1,5 +1,4 @@
-ARG IMAGE_TAG="automated"
-FROM atsigncompany/buildimage:$IMAGE_TAG AS build
+FROM dart AS build
 WORKDIR /app
 COPY ./dartshowplatform/showplatform.dart .
 RUN dart compile exe /app/showplatform.dart -o /app/dartshowplatform
