@@ -71,6 +71,7 @@ jobs:
         uses: docker/build-push-action@v2.7.0
         with:
           file: ./dartshowplatform/Dockerfile
+          build-args: DART_VERSION=${{ env.DART_VERSION }}
           push: true
           tags: |
             atsigncompany/dartshowplatform:automated
@@ -130,7 +131,7 @@ jobs:
               --build-arg DART_VERSION="$DART_VERSION" -f at-buildimage/Dockerfile .
             sudo docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
             sudo docker build -t atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH" \
-              --build-arg IMAGE_TAG="$DART_VERSION"-"$ARCH" -f dartshowplatform/Dockerfile .
+              --build-arg DART_VERSION="$DART_VERSION" -f dartshowplatform/Dockerfile .
             sudo docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
 
   tag_multi_arch_images:
