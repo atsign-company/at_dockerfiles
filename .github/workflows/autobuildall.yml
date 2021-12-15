@@ -175,3 +175,21 @@ jobs:
           name: New images build for Dart SDK ${{ env.DART_VERSION }}
           url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
           status: ${{ job.status }}
+
+  update_version_in_repo:
+    needs: [tag_multi_arch_images]
+    env:
+      DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout_to_update_version
+        uses: actions/checkout@v2.4.0 # checkout the repository content to github runner.
+
+      - id: dartversion
+        name: Update stable version
+        run: |
+          echo "$DART_VERSION" > DART_STABLE_VERSION
+          git config --global user.name 'Release Check Action'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -am "New Dart stable version $DART_VERSION"
+          git push
