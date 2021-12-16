@@ -26,10 +26,6 @@ jobs:
           else
             DART_VERSION=$(cat DART_STABLE_VERSION)
             echo "::set-output name=dartversion::$DART_VERSION"
-            git config --global user.name 'Release Check Action'
-            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git commit -am "New Dart stable version $DART_VERSION"
-            git push
           fi          
   
   build_multi_arch_images:
