@@ -173,7 +173,7 @@ jobs:
           status: ${{ job.status }}
 
   update_version_in_repo:
-    needs: [tag_multi_arch_images]
+    needs: [check_for_new_stable, tag_multi_arch_images]
     env:
       DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
     runs-on: ubuntu-latest
