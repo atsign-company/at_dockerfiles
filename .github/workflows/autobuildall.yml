@@ -12,7 +12,7 @@ jobs:
       dartversion: ${{ steps.dartversion.outputs.dartversion }}
     steps:
       - name: checkout repo content
-        uses: actions/checkout@v2.4.0 # checkout the repository content to github runner.
+        uses: actions/checkout@v3 # checkout the repository content to github runner.
 
       - id: dartversion
         name: Check stable version
@@ -179,7 +179,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout_to_update_version
-        uses: actions/checkout@v2.4.0 # checkout the repository content to github runner.
+        uses: actions/checkout@v3 # checkout the repository content to github runner.
 
       - id: dartversion
         name: Update stable version
