@@ -89,7 +89,7 @@ jobs:
           docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
 
       - name: Create arm64 labels
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v0.1.5
         with:
           host: "arm64cicd.atsign.wtf"
           username: ubuntu
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:            
       - name: Create arm images
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v0.1.5
         with:
           host: "arm32cicd.atsign.wtf"
           username: pi
