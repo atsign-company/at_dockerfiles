@@ -181,11 +181,28 @@ jobs:
       - name: checkout_to_update_version
         uses: actions/checkout@v3 # checkout the repository content to github runner.
 
-      - id: dartversion
-        name: Update stable version
+      - name: Update stable version
+        id: dartversion
         run: |
           echo "$DART_VERSION" > DART_STABLE_VERSION
-          git config --global user.name 'Release Check Action'
-          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -am "New Dart stable version $DART_VERSION"
-          git push
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          commit-message: 'chore: Bump DART_VERSION file to match latest Stable release'
+          committer: library-action[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: library-action[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          signoff: false
+          add-paths: .
+          branch: bot-new-stable-version
+          delete-branch: true
+          title: 'chore: New DART_STABLE_VERSION'
+          body: |
+            Bumping version tracking file after updating Docker images.
+          labels: |
+            operations
+          assignees: cpswan
+          reviewers: gkc
+          draft: false
