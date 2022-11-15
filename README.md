@@ -24,7 +24,7 @@ Takes a build time ARG - DART_VERSION (defaults to 2.13.0)
 Manual build:
 
 ```bash
-DART_VERSION="2.12.4"
+DART_VERSION="2.18.4"
 ARCH="arm"
 sudo docker build -t atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" \
 --build-arg DART_VERSION="$DART_VERSION" -f at-buildimage/Dockerfile .
@@ -35,7 +35,7 @@ Available on Dockerhub as [atsigncompany/buildimage](https://hub.docker.com/r/at
 ### multi-arch manifest creation and push
 
 ```bash
-DART_VERSION="2.12.4"
+DART_VERSION="2.18.4"
 sudo docker manifest create atsigncompany/buildimage:"$DART_VERSION" \
   --amend atsigncompany/buildimage:"$DART_VERSION"-arm \
   --amend atsigncompany/buildimage:"$DART_VERSION"-arm64 \
@@ -53,7 +53,7 @@ Used for testing multi stage, multi arch builds.
 Manual build:
 
 ```bash
-DART_VERSION="2.12.4"
+DART_VERSION="2.18.4"
 ARCH="arm"
 sudo docker build -t atsigncompany/dartshowplatform:"$DART_VERSION-$ARCH" \
 --build-arg IMAGE_TAG="$DART_VERSION-$ARCH" -f dartshowplatform/Dockerfile .
@@ -77,19 +77,9 @@ Available on Dockerhub as [atsigncompany/dartshowplatform](https://hub.docker.co
 
 There's a single GitHub Actions workflows:
 
-1. [buildall.yml](.github/workflows/buildall.yml) uses docker_build to 
-build and push at-buildimage and dartshowplatform for amd64 and arm64
-platforms. Then runs an arm build on a Raspberry Pi before bringing
-all the builds together into a set of multi architecture manifests.
-
-### Why isn't armv7 done in docker_build?
-
-There are presently two issues with automating builds for armv7 in the buildx
-action:
-
-1. `buildimage.yml` fails to make a correct TLS connection to download Dart SDK.
-2. `dartshowplatform.yml` gets `Unrecognized ARM CPU architecture.` coming from
-`dart compile` not being happy about the QEMU environment it finds itself in.
+1. [autobuildall.yml](.github/workflows/autobuildall.yml) uses docker_build
+to build and push at-buildimage and dartshowplatform for amd64, arm64 & arm
+platforms.
 
 ## License
 
