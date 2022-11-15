@@ -19,7 +19,7 @@ can run on multiple architectures (x86_64, armv7, arm64).
 
 Also adds git so that `dart pub get` works with git dependencies.
 
-Takes a build time ARG - DART_VERSION (defaults to 2.13.0)
+Takes a build time ARG - DART_VERSION (defaults to 2.18.4)
 
 Manual build:
 
@@ -68,7 +68,7 @@ sudo docker run -it atsigncompany/dartshowplatform:automated
 Example output:
 
 ```log
-2.12.4 (stable) (Thu Apr 15 12:26:53 2021 +0200) on "linux_arm64"
+2.18.4 (stable) (Tue Nov 1 15:15:07 2022 +0000) on "linux_arm64"
 ```
 
 Available on Dockerhub as [atsigncompany/dartshowplatform](https://hub.docker.com/r/atsigncompany/dartshowplatform)
