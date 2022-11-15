@@ -1,4 +1,4 @@
-ARG DART_VERSION="2.14.4"
+ARG DART_VERSION="2.18.4"
 FROM dart:${DART_VERSION} AS build
 WORKDIR /app
 COPY ./dartshowplatform/showplatform.dart .
