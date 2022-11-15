@@ -61,6 +61,7 @@ jobs:
           platforms: |
             linux/amd64
             linux/arm64/v8
+            linux/arm/v7
 
       - name: Build and push dartshowplatform
         id: docker_build3
@@ -76,94 +77,7 @@ jobs:
           platforms: |
             linux/amd64
             linux/arm64/v8
-
-      - name: Create x64 labels
-        env:
-          ARCH: x64
-        run: |
-          docker pull atsigncompany/buildimage:"$DART_VERSION"
-          docker pull atsigncompany/dartshowplatform:"$DART_VERSION"
-          docker tag atsigncompany/buildimage:"$DART_VERSION" atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
-          docker tag atsigncompany/dartshowplatform:"$DART_VERSION" atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
-          docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
-          docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
-
-      - name: Create arm64 labels
-        uses: appleboy/ssh-action@v0.1.5
-        with:
-          host: "arm64cicd.atsign.wtf"
-          username: ubuntu
-          key: ${{ secrets.CICD_SSH_KEY }}
-          script: |
-            export ARCH="arm64"
-            export DART_VERSION="${{ needs.check_for_new_stable.outputs.dartversion }}"
-            sudo docker pull atsigncompany/buildimage:"$DART_VERSION"
-            sudo docker pull atsigncompany/dartshowplatform:"$DART_VERSION"
-            sudo docker tag atsigncompany/buildimage:"$DART_VERSION" atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
-            sudo docker tag atsigncompany/dartshowplatform:"$DART_VERSION" atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
-            sudo docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
-            sudo docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
-
-  build_armv7_image:
-    needs: [check_for_new_stable]
-    if: ${{ needs.check_for_new_stable.outputs.dartversion != 'NOTNEW' }}
-    env:
-      DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
-    runs-on: ubuntu-latest
-    steps:            
-      - name: Create arm images
-        uses: appleboy/ssh-action@v0.1.5
-        with:
-          host: "arm32cicd.atsign.wtf"
-          username: pi
-          command_timeout: 30m
-          key: ${{ secrets.CICD_SSH_KEY }}
-          script: |
-            export ARCH="arm"
-            export DART_VERSION="${{ needs.check_for_new_stable.outputs.dartversion }}"
-            cd /home/pi/git/github.com/atsign-company/at_dockerfiles
-            git pull
-            sudo docker build -t atsigncompany/buildimage:"$DART_VERSION"-"$ARCH" \
-              --build-arg DART_VERSION="$DART_VERSION" -f at-buildimage/Dockerfile .
-            sudo docker push atsigncompany/buildimage:"$DART_VERSION"-"$ARCH"
-            sudo docker build -t atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH" \
-              --build-arg DART_VERSION="$DART_VERSION" -f dartshowplatform/Dockerfile .
-            sudo docker push atsigncompany/dartshowplatform:"$DART_VERSION"-"$ARCH"
-
-  tag_multi_arch_images:
-    needs: [check_for_new_stable, build_multi_arch_images, build_armv7_image]
-    env:
-      DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to DockerHub
-        uses: docker/login-action@v2.1.0 
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Create and push multi-arch manifests
-        run: |
-          docker manifest create atsigncompany/buildimage:"$DART_VERSION" \
-            --amend atsigncompany/buildimage:"$DART_VERSION"-arm \
-            --amend atsigncompany/buildimage:"$DART_VERSION"-arm64 \
-            --amend atsigncompany/buildimage:"$DART_VERSION"-x64
-          docker manifest push atsigncompany/buildimage:"$DART_VERSION"
-          docker manifest create atsigncompany/buildimage:latest \
-            --amend atsigncompany/buildimage:"$DART_VERSION"-arm \
-            --amend atsigncompany/buildimage:"$DART_VERSION"-arm64 \
-            --amend atsigncompany/buildimage:"$DART_VERSION"-x64
-          docker manifest push atsigncompany/buildimage:latest
-          docker manifest create atsigncompany/dartshowplatform:"$DART_VERSION" \
-            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-arm \
-            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-arm64 \
-            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-x64
-          docker manifest push atsigncompany/dartshowplatform:"$DART_VERSION"
-          docker manifest create atsigncompany/dartshowplatform:latest \
-            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-arm \
-            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-arm64 \
-            --amend atsigncompany/dartshowplatform:"$DART_VERSION"-x64
-          docker manifest push atsigncompany/dartshowplatform:latest
+            linux/arm/v7
 
       - name: Google Chat Notification
         uses: Co-qn/google-chat-notification@releases/v1
@@ -173,7 +87,7 @@ jobs:
           status: ${{ job.status }}
 
   update_version_in_repo:
-    needs: [check_for_new_stable, tag_multi_arch_images]
+    needs: [check_for_new_stable, build_multi_arch_images]
     env:
       DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
     runs-on: ubuntu-latest
