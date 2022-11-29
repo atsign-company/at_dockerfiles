@@ -83,7 +83,7 @@ jobs:
             linux/arm/v7
 
       - name: Google Chat Notification
-        uses: Co-qn/google-chat-notification@b9227d9daa4638c9782a5bd16c4abb86268127a1 # releases/v1
+        uses: Co-qn/google-chat-notification@3691ccf4763537d6e544bc6cdcccc1965799d056 # releases/v1
         with:
           name: New images build for Dart SDK ${{ env.DART_VERSION }}
           url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
