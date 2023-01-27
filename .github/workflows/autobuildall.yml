@@ -57,6 +57,7 @@ jobs:
           file: ./at-buildimage/Dockerfile
           build-args: DART_VERSION=${{ env.DART_VERSION }}
           push: true
+          provenance: false
           tags: |
             atsigncompany/buildimage:automated
             atsigncompany/buildimage:${{ env.DART_VERSION }}
@@ -73,6 +74,7 @@ jobs:
           file: ./dartshowplatform/Dockerfile
           build-args: DART_VERSION=${{ env.DART_VERSION }}
           push: true
+          provenance: false
           tags: |
             atsigncompany/dartshowplatform:automated
             atsigncompany/dartshowplatform:${{ env.DART_VERSION }}
