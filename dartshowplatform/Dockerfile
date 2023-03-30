@@ -1,5 +1,4 @@
-ARG DART_VERSION="2.18.4"
-FROM dart:${DART_VERSION} AS build
+FROM atsigncompany/buildimage:automated AS buildimage
 WORKDIR /app
 COPY ./dartshowplatform/showplatform.dart .
 RUN dart compile exe /app/showplatform.dart -o /app/dartshowplatform
