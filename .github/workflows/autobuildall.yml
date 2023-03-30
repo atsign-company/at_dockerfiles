@@ -24,16 +24,17 @@ jobs:
           DDURL="https://raw.githubusercontent.com/dart-lang/dart-docker/main/versions.json"
           curl -s $DDURL | jq -r .stable.version > DART_STABLE_VERSION
           if [ -z "$(git status --porcelain)" ]; then 
-            echo 'No new stable release of Dart'
-            echo "dartversion=NOTNEW" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            DART_VERSION=$(cat DART_STABLE_VERSION)
-            BETA_VERSION=$(curl -s $DDURL | jq -r .beta.version)
-            echo "dartversion=${DART_VERSION}" >> $GITHUB_OUTPUT
-            echo "betaversion=${BETA_VERSION}" >> $GITHUB_OUTPUT
-          fi          
-  
+            if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+              echo 'No new stable release of Dart'
+              echo "dartversion=NOTNEW" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+          DART_VERSION=$(cat DART_STABLE_VERSION)
+          BETA_VERSION=$(curl -s $DDURL | jq -r .beta.version)
+          echo "dartversion=${DART_VERSION}" >> $GITHUB_OUTPUT
+          echo "betaversion=${BETA_VERSION}" >> $GITHUB_OUTPUT
+
   build_multi_arch_images:
     needs: [check_for_new_stable]
     if: ${{ needs.check_for_new_stable.outputs.dartversion != 'NOTNEW' }}
@@ -136,6 +137,7 @@ jobs:
           status: ${{ job.status }}
 
   update_version_in_repo:
+    if: ${{ github.event_name != "workflow_dispatch" }}
     needs: [check_for_new_stable, build_multi_arch_images]
     env:
       DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
