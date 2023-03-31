@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       dartversion: ${{ steps.dartversion.outputs.dartversion }}
+      betaversion: ${{ steps.dartversion.outputs.betaversion }}
     steps:
       - name: checkout repo content
         uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3.5.0
@@ -23,19 +24,23 @@ jobs:
           DDURL="https://raw.githubusercontent.com/dart-lang/dart-docker/main/versions.json"
           curl -s $DDURL | jq -r .stable.version > DART_STABLE_VERSION
           if [ -z "$(git status --porcelain)" ]; then 
-            echo 'No new stable release of Dart'
-            echo "dartversion=NOTNEW" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            DART_VERSION=$(cat DART_STABLE_VERSION)
-            echo "dartversion=${DART_VERSION}" >> $GITHUB_OUTPUT
-          fi          
-  
+            if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+              echo 'No new stable release of Dart'
+              echo "dartversion=NOTNEW" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+          DART_VERSION=$(cat DART_STABLE_VERSION)
+          BETA_VERSION=$(curl -s $DDURL | jq -r .beta.version)
+          echo "dartversion=${DART_VERSION}" >> $GITHUB_OUTPUT
+          echo "betaversion=${BETA_VERSION}" >> $GITHUB_OUTPUT
+
   build_multi_arch_images:
     needs: [check_for_new_stable]
     if: ${{ needs.check_for_new_stable.outputs.dartversion != 'NOTNEW' }}
     env:
       DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
+      BETA_VERSION: ${{ needs.check_for_new_stable.outputs.betaversion }}
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -50,7 +55,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push buildimage
+      - name: Build and push Multi Arch buildimage
         id: docker_build1
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671 # v4.0.0
         with:
@@ -66,6 +71,45 @@ jobs:
             linux/amd64
             linux/arm64/v8
             linux/arm/v7
+
+      - name: Get SDK SHAs
+        id: sdk_shas
+        run: |
+          function get_beta_sha {
+            curl -s ${SHAPRE}${BETA_VERSION}${SHAMID}$1${SHAEND} | awk '{print $1}'
+          }
+          SHAPRE="https://storage.googleapis.com/dart-archive/channels/beta/release/"
+          SHAMID="/sdk/dartsdk-linux-"
+          SHAEND="-release.zip.sha256sum"
+          echo "X64_SHA=$(get_beta_sha x64)" >> $GITHUB_ENV
+          echo "ARM_SHA=$(get_beta_sha arm)" >> $GITHUB_ENV
+          echo "ARM64_SHA=$(get_beta_sha arm64)" >> $GITHUB_ENV
+          echo "RISCV64_SHA=$(get_beta_sha riscv64)" >> $GITHUB_ENV
+
+      - name: Build and push RISC-V buildimage
+        id: docker_build2
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671 # v4.0.0
+        with:
+          file: ./at-buildimage/Dockerfile.RV64
+          build-args: |
+            BETA_VERSION=${{ env.BETA_VERSION }}
+            X64_SHA=${{ env.X64_SHA }}
+            ARM_SHA=${{ env.ARM_SHA }}
+            ARM64_SHA=${{ env.ARM64_SHA }}
+            RISCV64_SHA=${{ env.RISCV64_SHA }}
+          push: true
+          provenance: false
+          tags: |
+            atsigncompany/buildimage:riscv
+            atsigncompany/buildimage:riscv-GHA_${{ github.run_number }}
+          platforms: |
+            linux/riscv64
+
+      - name: Combine build images
+        id: docker_manifest_build
+        run: |
+          docker buildx imagetools create -t atsigncompany/buildimage:automated \
+            --append atsigncompany/buildimage:riscv
 
       - name: Build and push dartshowplatform
         id: docker_build3
@@ -83,6 +127,7 @@ jobs:
             linux/amd64
             linux/arm64/v8
             linux/arm/v7
+            linux/riscv64
 
       - name: Google Chat Notification
         uses: Co-qn/google-chat-notification@3691ccf4763537d6e544bc6cdcccc1965799d056 # releases/v1
@@ -92,6 +137,7 @@ jobs:
           status: ${{ job.status }}
 
   update_version_in_repo:
+    if: ${{ github.event_name != "workflow_dispatch" }}
     needs: [check_for_new_stable, build_multi_arch_images]
     env:
       DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
