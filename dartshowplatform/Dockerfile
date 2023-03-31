@@ -1,4 +1,4 @@
-FROM atsigncompany/buildimage:automated AS buildimage
+FROM atsigncompany/buildimage:automated AS build
 WORKDIR /app
 COPY ./dartshowplatform/showplatform.dart .
 RUN dart compile exe /app/showplatform.dart -o /app/dartshowplatform

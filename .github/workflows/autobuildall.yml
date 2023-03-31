@@ -137,7 +137,7 @@ jobs:
           status: ${{ job.status }}
 
   update_version_in_repo:
-    if: ${{ github.event_name != "workflow_dispatch" }}
+    if: ${{ github.event_name != 'workflow_dispatch' }}
     needs: [check_for_new_stable, build_multi_arch_images]
     env:
       DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
