@@ -102,6 +102,7 @@ jobs:
           tags: |
             atsigncompany/buildimage:riscv
             atsigncompany/buildimage:riscv-GHA_${{ github.run_number }}
+            atsigncompany/buildimage:riscv-beta_${{ env.BETA_VERSION  }}
           platforms: |
             linux/riscv64
 
@@ -109,6 +110,13 @@ jobs:
         id: docker_manifest_build
         run: |
           docker buildx imagetools create -t atsigncompany/buildimage:automated \
+            --append atsigncompany/buildimage:riscv
+          docker buildx imagetools create -t atsigncompany/buildimage:${{ env.DART_VERSION }} \
+            --append atsigncompany/buildimage:riscv
+          docker buildx imagetools create \
+            -t atsigncompany/buildimage:${{ env.DART_VERSION }}-beta_${{ env.BETA_VERSION  }} \
+            --append atsigncompany/buildimage:riscv
+          docker buildx imagetools create -t atsigncompany/buildimage:GHA_${{ github.run_number }} \
             --append atsigncompany/buildimage:riscv
 
       - name: Build and push dartshowplatform
