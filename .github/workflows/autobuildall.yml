@@ -66,6 +66,7 @@ jobs:
           tags: |
             atsigncompany/buildimage:automated
             atsigncompany/buildimage:${{ env.DART_VERSION }}
+            atsigncompany/buildimage:${{ env.DART_VERSION }}-beta_${{ env.BETA_VERSION  }}
             atsigncompany/buildimage:GHA_${{ github.run_number }}
           platforms: |
             linux/amd64
