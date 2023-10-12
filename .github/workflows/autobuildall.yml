@@ -31,7 +31,7 @@ jobs:
             fi
           fi
           DART_VERSION=$(cat DART_STABLE_VERSION)
-          BETA_VERSION=$(cat DART_LAST_BETA_VERSION)
+          BETA_VERSION=$(curl -s $DDURL | jq -r .beta.version)
           echo "dartversion=${DART_VERSION}" >> $GITHUB_OUTPUT
           echo "betaversion=${BETA_VERSION}" >> $GITHUB_OUTPUT
 
