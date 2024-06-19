@@ -57,7 +57,7 @@ jobs:
 
       - name: Build and push Multi Arch buildimage
         id: docker_build1
-        uses: docker/build-push-action@c382f710d39a5bb4e430307530a720f50c2d3318 # v6.0.0
+        uses: docker/build-push-action@94f8f8c2eec4bc3f1d78c1755580779804cb87b2 # v6.0.1
         with:
           file: ./at-buildimage/Dockerfile
           build-args: DART_VERSION=${{ env.DART_VERSION }}
@@ -89,7 +89,7 @@ jobs:
 
       - name: Build and push RISC-V buildimage
         id: docker_build2
-        uses: docker/build-push-action@c382f710d39a5bb4e430307530a720f50c2d3318 # v6.0.0
+        uses: docker/build-push-action@94f8f8c2eec4bc3f1d78c1755580779804cb87b2 # v6.0.1
         with:
           file: ./at-buildimage/Dockerfile.RV64
           build-args: |
@@ -122,7 +122,7 @@ jobs:
 
       - name: Build and push dartshowplatform
         id: docker_build3
-        uses: docker/build-push-action@c382f710d39a5bb4e430307530a720f50c2d3318 # v6.0.0
+        uses: docker/build-push-action@94f8f8c2eec4bc3f1d78c1755580779804cb87b2 # v6.0.1
         with:
           file: ./dartshowplatform/Dockerfile
           build-args: DART_VERSION=${{ env.DART_VERSION }}
@@ -162,7 +162,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@6d6857d36972b65feb161a90e484f2984215f83e # v6.0.5
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
         with:
           token: ${{ secrets.MY_GITHUB_TOKEN }}
           commit-message: 'chore: Bump DART_VERSION file to match latest Stable release'
