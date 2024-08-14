@@ -57,7 +57,7 @@ jobs:
 
       - name: Build and push Multi Arch buildimage
         id: docker_build1
-        uses: docker/build-push-action@16ebe778df0e7752d2cfcbd924afdbbd89c1a755 # v6.6.1
+        uses: docker/build-push-action@5cd11c3a4ced054e52742c5fd54dca954e0edd85 # v6.7.0
         with:
           file: ./at-buildimage/Dockerfile
           build-args: DART_VERSION=${{ env.DART_VERSION }}
@@ -89,7 +89,7 @@ jobs:
 
       - name: Build and push RISC-V buildimage
         id: docker_build2
-        uses: docker/build-push-action@16ebe778df0e7752d2cfcbd924afdbbd89c1a755 # v6.6.1
+        uses: docker/build-push-action@5cd11c3a4ced054e52742c5fd54dca954e0edd85 # v6.7.0
         with:
           file: ./at-buildimage/Dockerfile.RV64
           build-args: |
@@ -122,7 +122,7 @@ jobs:
 
       - name: Build and push dartshowplatform
         id: docker_build3
-        uses: docker/build-push-action@16ebe778df0e7752d2cfcbd924afdbbd89c1a755 # v6.6.1
+        uses: docker/build-push-action@5cd11c3a4ced054e52742c5fd54dca954e0edd85 # v6.7.0
         with:
           file: ./dartshowplatform/Dockerfile
           build-args: DART_VERSION=${{ env.DART_VERSION }}
