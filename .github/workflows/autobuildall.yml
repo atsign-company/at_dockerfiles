@@ -62,7 +62,6 @@ jobs:
           tags: |
             atsigncompany/buildimage:automated
             atsigncompany/buildimage:${{ env.DART_VERSION }}
-            atsigncompany/buildimage:${{ env.DART_VERSION }}_${{ env.BETA_VERSION  }}
             atsigncompany/buildimage:GHA_${{ github.run_number }}
           platforms: |
             linux/amd64
@@ -99,7 +98,6 @@ jobs:
           tags: |
             atsigncompany/buildimage:riscv
             atsigncompany/buildimage:riscv-GHA_${{ github.run_number }}
-            atsigncompany/buildimage:riscv_${{ env.BETA_VERSION  }}
           platforms: |
             linux/riscv64
 
@@ -109,9 +107,6 @@ jobs:
           docker buildx imagetools create -t atsigncompany/buildimage:automated \
             --append atsigncompany/buildimage:riscv
           docker buildx imagetools create -t atsigncompany/buildimage:${{ env.DART_VERSION }} \
-            --append atsigncompany/buildimage:riscv
-          docker buildx imagetools create \
-            -t atsigncompany/buildimage:${{ env.DART_VERSION }}_${{ env.BETA_VERSION  }} \
             --append atsigncompany/buildimage:riscv
           docker buildx imagetools create -t atsigncompany/buildimage:GHA_${{ github.run_number }} \
             --append atsigncompany/buildimage:riscv
