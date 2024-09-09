@@ -1,10 +1,10 @@
-FROM debian:unstable-slim
+FROM ubuntu:noble@8a37d68f4f73ebf3d4efafbcf66379bf3728902a8038616808f04e34a9ab63ee
 
-ARG BETA_VERSION="3.0.0-290.3.beta"
-ARG X64_SHA="eaaeee6be87a140a08ae0b6cc76e23ff4e5cb0ef7bbfa8ffa08b90e26b826e6e"
-ARG ARM_SHA="7636eb23c9053bceebf326ae46c8e7be57c5c3cbaedabe2a5a0d6c8717dcc5e9"
-ARG ARM64_SHA="b8f3d1f6c65657296757455ac99fab5772dcdb333cc83d15d626717779f2224a"
-ARG RISCV64_SHA="013000bebf117608e9572336f227bffa1839d119753d084009331fc6e1747c9e"
+ARG DART_VERSION="3.5.2"
+ARG X64_SHA="0b50f0523eb1cdaa3c18bcb88f78b4dddfad9e3abced0aef05b0fd765b980d98"
+ARG ARM_SHA="6be11d8bf7e9f4b9a04ba3169be9af7f407f73c0eee60c0081c5f3871762489c"
+ARG ARM64_SHA="0a382412154fc12ce6dd6d25903281e3c33922b0d3857bc541baea054f09a1f2"
+ARG RISCV64_SHA="db992347d0bab44ec6df1faac25ca73c5e12840e9f3a638cbd6a87d741655f50"
 
 RUN set -eux; \
     apt-get update; \
@@ -82,7 +82,7 @@ RUN set -eux; \
     esac; \
     SDK="dartsdk-linux-${SDK_ARCH}-release.zip"; \
     BASEURL="https://storage.googleapis.com/dart-archive/channels"; \
-    URL="$BASEURL/beta/release/${BETA_VERSION}/sdk/$SDK"; \
+    URL="$BASEURL/stable/release/${DART_VERSION}/sdk/$SDK"; \
     echo "SDK: $URL" >> dart_setup.log ; \
     curl -fLO "$URL"; \
     echo "$DART_SHA256 *$SDK" \

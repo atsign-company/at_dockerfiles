@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       dartversion: ${{ steps.dartversion.outputs.dartversion }}
-      betaversion: ${{ steps.dartversion.outputs.betaversion }}
     steps:
       - name: checkout repo content
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
@@ -31,16 +30,13 @@ jobs:
             fi
           fi
           DART_VERSION=$(cat DART_STABLE_VERSION)
-          BETA_VERSION=$(curl -s $DDURL | jq -r .beta.version)
           echo "dartversion=${DART_VERSION}" >> $GITHUB_OUTPUT
-          echo "betaversion=${BETA_VERSION}" >> $GITHUB_OUTPUT
 
   build_multi_arch_images:
     needs: [check_for_new_stable]
     if: ${{ needs.check_for_new_stable.outputs.dartversion != 'NOTNEW' }}
     env:
       DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
-      BETA_VERSION: ${{ needs.check_for_new_stable.outputs.betaversion }}
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -75,16 +71,16 @@ jobs:
       - name: Get SDK SHAs
         id: sdk_shas
         run: |
-          function get_beta_sha {
-            curl -s ${SHAPRE}${BETA_VERSION}${SHAMID}$1${SHAEND} | awk '{print $1}'
+          function get_stable_sha {
+            curl -s ${SHAPRE}${DART_VERSION}${SHAMID}$1${SHAEND} | awk '{print $1}'
           }
-          SHAPRE="https://storage.googleapis.com/dart-archive/channels/beta/release/"
+          SHAPRE="https://storage.googleapis.com/dart-archive/channels/stable/release/"
           SHAMID="/sdk/dartsdk-linux-"
           SHAEND="-release.zip.sha256sum"
-          echo "X64_SHA=$(get_beta_sha x64)" >> $GITHUB_ENV
-          echo "ARM_SHA=$(get_beta_sha arm)" >> $GITHUB_ENV
-          echo "ARM64_SHA=$(get_beta_sha arm64)" >> $GITHUB_ENV
-          echo "RISCV64_SHA=$(get_beta_sha riscv64)" >> $GITHUB_ENV
+          echo "X64_SHA=$(get_stable_sha x64)" >> $GITHUB_ENV
+          echo "ARM_SHA=$(get_stable_sha arm)" >> $GITHUB_ENV
+          echo "ARM64_SHA=$(get_stable_sha arm64)" >> $GITHUB_ENV
+          echo "RISCV64_SHA=$(get_stable_sha riscv64)" >> $GITHUB_ENV
 
       - name: Build and push RISC-V buildimage
         id: docker_build2
@@ -92,7 +88,7 @@ jobs:
         with:
           file: ./at-buildimage/Dockerfile.RV64
           build-args: |
-            BETA_VERSION=${{ env.BETA_VERSION }}
+            DART_VERSION=${{ env.DART_VERSION }}
             X64_SHA=${{ env.X64_SHA }}
             ARM_SHA=${{ env.ARM_SHA }}
             ARM64_SHA=${{ env.ARM64_SHA }}
