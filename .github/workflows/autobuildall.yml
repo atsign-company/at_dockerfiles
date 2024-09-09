@@ -98,6 +98,7 @@ jobs:
           tags: |
             atsigncompany/buildimage:riscv
             atsigncompany/buildimage:riscv-GHA_${{ github.run_number }}
+            atsigncompany/buildimage:riscv_${{ env.DART_VERSION }}
           platforms: |
             linux/riscv64
 
