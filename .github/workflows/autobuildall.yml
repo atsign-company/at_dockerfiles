@@ -15,7 +15,7 @@ jobs:
       dartversion: ${{ steps.dartversion.outputs.dartversion }}
     steps:
       - name: checkout repo content
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - id: dartversion
         name: Check stable version
@@ -40,20 +40,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18 # v2.1.0
+        uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3.2.0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4b4e9c3e2d4531116a6f8ba8e71fc6e2cb6e6c8c # v2.5.0
+        uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3.6.1
 
       - name: Login to DockerHub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0 
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Multi Arch buildimage
         id: docker_build1
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671 # v4.0.0
+        uses: docker/build-push-action@5cd11c3a4ced054e52742c5fd54dca954e0edd85 # v6.7.0
         with:
           file: ./at-buildimage/Dockerfile
           build-args: DART_VERSION=${{ env.DART_VERSION }}
@@ -62,6 +62,7 @@ jobs:
           tags: |
             atsigncompany/buildimage:automated
             atsigncompany/buildimage:${{ env.DART_VERSION }}
+            atsigncompany/buildimage:${{ env.DART_VERSION }}_${{ env.BETA_VERSION  }}
             atsigncompany/buildimage:GHA_${{ github.run_number }}
           platforms: |
             linux/amd64
@@ -84,7 +85,7 @@ jobs:
 
       - name: Build and push RISC-V buildimage
         id: docker_build2
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671 # v4.0.0
+        uses: docker/build-push-action@5cd11c3a4ced054e52742c5fd54dca954e0edd85 # v6.7.0
         with:
           file: ./at-buildimage/Dockerfile.RV64
           build-args: |
@@ -98,6 +99,7 @@ jobs:
           tags: |
             atsigncompany/buildimage:riscv
             atsigncompany/buildimage:riscv-GHA_${{ github.run_number }}
+            atsigncompany/buildimage:riscv_${{ env.BETA_VERSION  }}
           platforms: |
             linux/riscv64
 
@@ -106,10 +108,17 @@ jobs:
         run: |
           docker buildx imagetools create -t atsigncompany/buildimage:automated \
             --append atsigncompany/buildimage:riscv
+          docker buildx imagetools create -t atsigncompany/buildimage:${{ env.DART_VERSION }} \
+            --append atsigncompany/buildimage:riscv
+          docker buildx imagetools create \
+            -t atsigncompany/buildimage:${{ env.DART_VERSION }}_${{ env.BETA_VERSION  }} \
+            --append atsigncompany/buildimage:riscv
+          docker buildx imagetools create -t atsigncompany/buildimage:GHA_${{ github.run_number }} \
+            --append atsigncompany/buildimage:riscv
 
       - name: Build and push dartshowplatform
         id: docker_build3
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671 # v4.0.0
+        uses: docker/build-push-action@5cd11c3a4ced054e52742c5fd54dca954e0edd85 # v6.7.0
         with:
           file: ./dartshowplatform/Dockerfile
           build-args: DART_VERSION=${{ env.DART_VERSION }}
@@ -140,7 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout_to_update_version
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Update stable version
         id: dartversion
@@ -149,7 +158,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@284f54f989303d2699d373481a0cfa13ad5a6666 # v5.0.1
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
         with:
           token: ${{ secrets.MY_GITHUB_TOKEN }}
           commit-message: 'chore: Bump DART_VERSION file to match latest Stable release'
