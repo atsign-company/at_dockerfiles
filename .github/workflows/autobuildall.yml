@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       dartversion: ${{ steps.dartversion.outputs.dartversion }}
-      betaversion: ${{ steps.dartversion.outputs.betaversion }}
     steps:
       - name: checkout repo content
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -31,16 +30,13 @@ jobs:
             fi
           fi
           DART_VERSION=$(cat DART_STABLE_VERSION)
-          BETA_VERSION=$(curl -s $DDURL | jq -r .beta.version)
           echo "dartversion=${DART_VERSION}" >> $GITHUB_OUTPUT
-          echo "betaversion=${BETA_VERSION}" >> $GITHUB_OUTPUT
 
   build_multi_arch_images:
     needs: [check_for_new_stable]
     if: ${{ needs.check_for_new_stable.outputs.dartversion != 'NOTNEW' }}
     env:
       DART_VERSION: ${{ needs.check_for_new_stable.outputs.dartversion }}
-      BETA_VERSION: ${{ needs.check_for_new_stable.outputs.betaversion }}
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -66,7 +62,6 @@ jobs:
           tags: |
             atsigncompany/buildimage:automated
             atsigncompany/buildimage:${{ env.DART_VERSION }}
-            atsigncompany/buildimage:${{ env.DART_VERSION }}_${{ env.BETA_VERSION  }}
             atsigncompany/buildimage:GHA_${{ github.run_number }}
           platforms: |
             linux/amd64
@@ -76,16 +71,16 @@ jobs:
       - name: Get SDK SHAs
         id: sdk_shas
         run: |
-          function get_beta_sha {
-            curl -s ${SHAPRE}${BETA_VERSION}${SHAMID}$1${SHAEND} | awk '{print $1}'
+          function get_stable_sha {
+            curl -s ${SHAPRE}${DART_VERSION}${SHAMID}$1${SHAEND} | awk '{print $1}'
           }
-          SHAPRE="https://storage.googleapis.com/dart-archive/channels/beta/release/"
+          SHAPRE="https://storage.googleapis.com/dart-archive/channels/stable/release/"
           SHAMID="/sdk/dartsdk-linux-"
           SHAEND="-release.zip.sha256sum"
-          echo "X64_SHA=$(get_beta_sha x64)" >> $GITHUB_ENV
-          echo "ARM_SHA=$(get_beta_sha arm)" >> $GITHUB_ENV
-          echo "ARM64_SHA=$(get_beta_sha arm64)" >> $GITHUB_ENV
-          echo "RISCV64_SHA=$(get_beta_sha riscv64)" >> $GITHUB_ENV
+          echo "X64_SHA=$(get_stable_sha x64)" >> $GITHUB_ENV
+          echo "ARM_SHA=$(get_stable_sha arm)" >> $GITHUB_ENV
+          echo "ARM64_SHA=$(get_stable_sha arm64)" >> $GITHUB_ENV
+          echo "RISCV64_SHA=$(get_stable_sha riscv64)" >> $GITHUB_ENV
 
       - name: Build and push RISC-V buildimage
         id: docker_build2
@@ -93,7 +88,7 @@ jobs:
         with:
           file: ./at-buildimage/Dockerfile.RV64
           build-args: |
-            BETA_VERSION=${{ env.BETA_VERSION }}
+            DART_VERSION=${{ env.DART_VERSION }}
             X64_SHA=${{ env.X64_SHA }}
             ARM_SHA=${{ env.ARM_SHA }}
             ARM64_SHA=${{ env.ARM64_SHA }}
@@ -103,7 +98,7 @@ jobs:
           tags: |
             atsigncompany/buildimage:riscv
             atsigncompany/buildimage:riscv-GHA_${{ github.run_number }}
-            atsigncompany/buildimage:riscv_${{ env.BETA_VERSION  }}
+            atsigncompany/buildimage:riscv_${{ env.DART_VERSION }}
           platforms: |
             linux/riscv64
 
@@ -113,9 +108,6 @@ jobs:
           docker buildx imagetools create -t atsigncompany/buildimage:automated \
             --append atsigncompany/buildimage:riscv
           docker buildx imagetools create -t atsigncompany/buildimage:${{ env.DART_VERSION }} \
-            --append atsigncompany/buildimage:riscv
-          docker buildx imagetools create \
-            -t atsigncompany/buildimage:${{ env.DART_VERSION }}_${{ env.BETA_VERSION  }} \
             --append atsigncompany/buildimage:riscv
           docker buildx imagetools create -t atsigncompany/buildimage:GHA_${{ github.run_number }} \
             --append atsigncompany/buildimage:riscv
