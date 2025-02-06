@@ -111,7 +111,7 @@ Available on Dockerhub as
 
 ## Automation
 
-There's two GitHub Actions workflows:
+There are two GitHub Actions workflows:
 
 1. [autobuildall.yml](.github/workflows/autobuildall.yml) uses docker_build
 to build and push at-buildimage and dartshowplatform for amd64, arm, arm64 &
