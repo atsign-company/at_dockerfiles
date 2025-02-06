@@ -10,7 +10,9 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "docker"
-    directory: "/at-buildimage/"
+    directories:
+      - "/at-buildimage/"
+      - "/valgrind/"
     schedule:
       interval: "daily"
     groups:
