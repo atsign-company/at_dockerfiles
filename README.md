@@ -78,13 +78,47 @@ Example output:
 Available on Dockerhub as
 [atsigncompany/dartshowplatform](https://hub.docker.com/r/atsigncompany/dartshowplatform)
 
+## valgrind
+
+A container meant to be run locally which contains Linux only tools for C
+development. Useful for development, memcheck testing, and debugging on MacOS
+and Windows.
+
+Run an ephemeral container for tests:
+
+```sh
+PROJECT_DIR="$PWD" # change to your project's working directory
+docker run --rm --platform linux/amd64 \
+  --mount type=bind,src=$PROJECT_DIR,dst=/mnt/workdir \
+  --mount type=bind,src=$HOME/.atsign/keys,dst=/root/.atsign/keys \
+  atsigncompany/valgrind:latest \
+  <your test command>
+```
+
+Run a persistent shell in the container:
+
+```sh
+PROJECT_DIR="$PWD" # change to your project's working directory
+docker run --rm --platform linux/amd64 -ti \
+  --mount type=bind,src=$PROJECT_DIR,dst=/mnt/workdir \
+  --mount type=bind,src=$HOME/.atsign/keys,dst=/root/.atsign/keys \
+  atsigncompany/valgrind:latest \
+  /bin/bash
+```
+
+Available on Dockerhub as
+[atsigncompany/valgrind](https://hub.docker.com/r/atsigncompany/valgrind)
+
 ## Automation
 
-There's a single GitHub Actions workflows:
+There's two GitHub Actions workflows:
 
 1. [autobuildall.yml](.github/workflows/autobuildall.yml) uses docker_build
 to build and push at-buildimage and dartshowplatform for amd64, arm, arm64 &
 riscv64 platforms.
+
+2. [valgrind.yml](.github/workflows/valgrind.yml) uses docker_build
+to build and push the valgrind image for amd64, arm & arm64 platforms.
 
 ## License
 

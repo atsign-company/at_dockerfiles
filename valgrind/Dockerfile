@@ -1,0 +1,17 @@
+FROM ubuntu:24.04
+
+RUN apt-get update; apt-get upgrade -y
+RUN apt-get install -y git-core \
+  build-essential \
+  ninja-build \
+  sudo \
+  curl \
+  clang \
+  just \
+  valgrind \
+  gcc \
+  cmake
+
+WORKDIR /mnt/workdir
+
+CMD [ "tail", "-f", "/dev/null" ]
