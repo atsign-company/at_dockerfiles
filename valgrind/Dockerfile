@@ -16,6 +16,7 @@ RUN useradd -ms /bin/bash atsign; \
 
 USER atsign
 ENV HOME=/home/atsign
+ENV USER=atsign
 WORKDIR /mnt/workdir
 
 CMD [ "tail", "-f", "/dev/null" ]
