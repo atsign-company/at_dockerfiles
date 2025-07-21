@@ -1,19 +1,18 @@
-FROM ubuntu:noble@sha256:a08e551cb33850e4740772b38217fc1796a66da2506d312abe51acda354ff061
+FROM debian:trixie-slim@sha256:88ef4df0f82963ff3c0472493da188f082822b2a16b1be23d238d124d5c8c92e
 
-ARG DART_VERSION="3.5.2"
-ARG X64_SHA="0b50f0523eb1cdaa3c18bcb88f78b4dddfad9e3abced0aef05b0fd765b980d98"
-ARG ARM_SHA="6be11d8bf7e9f4b9a04ba3169be9af7f407f73c0eee60c0081c5f3871762489c"
-ARG ARM64_SHA="0a382412154fc12ce6dd6d25903281e3c33922b0d3857bc541baea054f09a1f2"
-ARG RISCV64_SHA="db992347d0bab44ec6df1faac25ca73c5e12840e9f3a638cbd6a87d741655f50"
+ARG DART_VERSION="3.8.2"
+ARG X64_SHA="2945baab11cf7472328e5573713993baf917957fad691c1461cabd5a096e8311"
+ARG ARM_SHA="250c7e7f77456213c6bdd90c731dfac77c3406a9832f3d2ba1719500f1af239e"
+ARG ARM64_SHA="6057db4cd909e37ec5f7dcf34ac0a65bc34fb41330b4c3718c43db1a50e8906f"
+ARG RISCV64_SHA="9f43ea17168881898d4d6bfffe67a256a4940cec828f45d20d27c608fef78dc0"
 
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
-        dnsutils \
+        bind9-dnsutils \
         git \
-        libatomic1 \
         openssh-client \
         unzip \
     ; \
