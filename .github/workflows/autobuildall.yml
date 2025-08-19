@@ -52,7 +52,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Multi Arch buildimage
-        id: docker_build1
+        id: docker_build
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           file: ./at-buildimage/Dockerfile
@@ -67,53 +67,10 @@ jobs:
             linux/amd64
             linux/arm64/v8
             linux/arm/v7
-
-      - name: Get SDK SHAs
-        id: sdk_shas
-        run: |
-          function get_stable_sha {
-            curl -s ${SHAPRE}${DART_VERSION}${SHAMID}$1${SHAEND} | awk '{print $1}'
-          }
-          SHAPRE="https://storage.googleapis.com/dart-archive/channels/stable/release/"
-          SHAMID="/sdk/dartsdk-linux-"
-          SHAEND="-release.zip.sha256sum"
-          echo "X64_SHA=$(get_stable_sha x64)" >> $GITHUB_ENV
-          echo "ARM_SHA=$(get_stable_sha arm)" >> $GITHUB_ENV
-          echo "ARM64_SHA=$(get_stable_sha arm64)" >> $GITHUB_ENV
-          echo "RISCV64_SHA=$(get_stable_sha riscv64)" >> $GITHUB_ENV
-
-      - name: Build and push RISC-V buildimage
-        id: docker_build2
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
-        with:
-          file: ./at-buildimage/Dockerfile.RV64
-          build-args: |
-            DART_VERSION=${{ env.DART_VERSION }}
-            X64_SHA=${{ env.X64_SHA }}
-            ARM_SHA=${{ env.ARM_SHA }}
-            ARM64_SHA=${{ env.ARM64_SHA }}
-            RISCV64_SHA=${{ env.RISCV64_SHA }}
-          push: true
-          provenance: false
-          tags: |
-            atsigncompany/buildimage:riscv
-            atsigncompany/buildimage:riscv-GHA_${{ github.run_number }}
-            atsigncompany/buildimage:riscv_${{ env.DART_VERSION }}
-          platforms: |
             linux/riscv64
 
-      - name: Combine build images
-        id: docker_manifest_build
-        run: |
-          docker buildx imagetools create -t atsigncompany/buildimage:automated \
-            --append atsigncompany/buildimage:riscv
-          docker buildx imagetools create -t atsigncompany/buildimage:${{ env.DART_VERSION }} \
-            --append atsigncompany/buildimage:riscv
-          docker buildx imagetools create -t atsigncompany/buildimage:GHA_${{ github.run_number }} \
-            --append atsigncompany/buildimage:riscv
-
       - name: Build and push dartshowplatform
-        id: docker_build3
+        id: docker_build_sp
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           file: ./dartshowplatform/Dockerfile
