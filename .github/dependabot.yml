@@ -15,9 +15,6 @@ updates:
       - "/valgrind/"
     schedule:
       interval: "daily"
-    ignore:
-      - dependency-name: "*" # Applies to all Docker images
-        versions: ["*beta*"] # Ignore versions that include 'beta'
     groups:
       docker:
         patterns:
