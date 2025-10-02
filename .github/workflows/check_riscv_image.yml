@@ -50,7 +50,7 @@ jobs:
           # The '2>/dev/null' suppresses warnings from the inspect command.
           MANIFEST=$(docker buildx imagetools inspect "${IMAGE_REF}" --format "{{json .Manifest}}" 2>/dev/null)
           echo $MANIFEST
-          RISCV_COUNT=$(cat ${MANIFEST} jq -r '[.manifests[]?.platform.architecture | select(. == "riscv64")] | length')
+          RISCV_COUNT=$(cat ${MANIFEST} | jq -r '[.manifests[]?.platform.architecture | select(. == "riscv64")] | length')
 
           if [ "$RISCV_COUNT" -gt 0 ]; then
             echo "✅ SUCCESS: Image manifest for ${IMAGE_REF} (from $IMAGE_NAME) explicitly lists riscv64 architecture."
