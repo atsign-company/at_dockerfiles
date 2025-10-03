@@ -50,7 +50,6 @@ jobs:
           # The '2>/dev/null' suppresses warnings from the inspect command.
           MANIFEST=$(docker buildx imagetools inspect "${IMAGE_REF}" --raw 2>/dev/null)
           echo $MANIFEST
-          docker buildx imagetools inspect "${IMAGE_REF}" --raw 2>/dev/null
           RISCV_COUNT=$(echo ${MANIFEST} | jq -r '[.manifests[]?.platform.architecture | select(. == "riscv64")] | length')
 
           if [ "$RISCV_COUNT" -gt 0 ]; then
