@@ -101,3 +101,15 @@ to build and push the valgrind image for amd64, arm & arm64 platforms.
 ## License
 
 The contents of this repository are licensed using the [Apache 2.0 License](LICENSE)
+
+## Docker image signing
+
+This repo is the source for a number of Docker images, and they're signed
+during the build process so that you can verify their authenticity using
+[cosign](https://github.com/sigstore/cosign):
+
+```sh
+cosign verify atsigncompany/buildimage:automated \
+--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+--certificate-identity-regexp='^https://github.com/atsign-company/at_dockerfiles/.+'
+```
