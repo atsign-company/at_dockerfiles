@@ -1,4 +1,4 @@
-name: Valgrind
+name: Caddy
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     branches:
       - trunk
     paths:
-      - 'valgrind/Dockerfile'
+      - 'caddy-do-dns/Dockerfile'
 
 permissions: # added using https://github.com/step-security/secure-workflows
   contents: read
@@ -41,22 +41,20 @@ jobs:
             type=raw,value=latest
             type=raw,value=GHA_${{ github.run_number }}
           images: |
-            atsigncompany/valgrind
+            atsigncompany/caddy-do-dns
           labels: |
-            org.opencontainers.image.description=Valgrind Image
+            org.opencontainers.image.description=Caddy with DigitalOcean DNS
 
       - name: Build and push Multi Arch images
         id: docker_build
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
-          file: ./valgrind/Dockerfile
+          file: ./caddy-do-dns/Dockerfile
           push: true
-          provenance: false
+          provenance: true
           tags: ${{ steps.meta.outputs.tags }}
           platforms: |
             linux/amd64
-            linux/arm64/v8
-            linux/arm/v7
 
       - name: Sign the images with GitHub OIDC Token
         env:
