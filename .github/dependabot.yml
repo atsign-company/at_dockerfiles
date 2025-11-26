@@ -13,6 +13,7 @@ updates:
     directories:
       - "/at-buildimage/"
       - "/valgrind/"
+      - "/caddy-do-dns/"
     schedule:
       interval: "daily"
     groups:

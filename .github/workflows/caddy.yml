@@ -1,0 +1,68 @@
+name: Caddy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - trunk
+    paths:
+      - 'caddy-do-dns/Dockerfile'
+
+permissions: # added using https://github.com/step-security/secure-workflows
+  contents: read
+
+jobs:
+  build_images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # for creating OIDC tokens for signing.
+    steps:
+      - name: Install cosign
+        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@318604b99e75e41977312d83839a89be02ca4893 # v5.9.0
+        with:
+          tags: |
+            type=raw,value=latest
+            type=raw,value=GHA_${{ github.run_number }}
+          images: |
+            atsigncompany/caddy-do-dns
+          labels: |
+            org.opencontainers.image.description=Caddy with DigitalOcean DNS
+
+      - name: Build and push Multi Arch images
+        id: docker_build
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        with:
+          file: ./caddy-do-dns/Dockerfile
+          push: true
+          provenance: true
+          tags: ${{ steps.meta.outputs.tags }}
+          platforms: |
+            linux/amd64
+
+      - name: Sign the images with GitHub OIDC Token
+        env:
+          DIGEST: ${{ steps.docker_build.outputs.digest }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes ${images}

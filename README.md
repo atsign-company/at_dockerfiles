@@ -87,9 +87,19 @@ docker run --rm --platform linux/amd64 -ti \
 Available on Dockerhub as
 [atsigncompany/valgrind](https://hub.docker.com/r/atsigncompany/valgrind)
 
+## caddy-do-dns
+
+The [Caddy](https://caddyserver.com/) reverse proxy with
+[DigitalOcean DNS](https://github.com/caddy-dns/digitalocean) so that we can
+get certificates using ACME services like LetsEncrypt with a DNS validation
+rather than opening up port 80 for HTTP.
+
+Available on Dockerhub as
+[atsigncompany/caddy-do-dns](https://hub.docker.com/r/atsigncompany/caddy-do-dns)
+
 ## Automation
 
-There are two GitHub Actions workflows:
+There are three GitHub Actions workflows:
 
 1. [autobuildall.yml](.github/workflows/autobuildall.yml) uses docker_build
 to build and push at-buildimage and dartshowplatform for amd64, arm, arm64 &
@@ -97,6 +107,10 @@ riscv64 platforms.
 
 2. [valgrind.yml](.github/workflows/valgrind.yml) uses docker_build
 to build and push the valgrind image for amd64, arm & arm64 platforms.
+
+3. [caddy.yml](.github/workflows/caddy.yml) uses docker_build
+to build and push the caddy-do-dns image for amd64.
+
 
 ## License
 
