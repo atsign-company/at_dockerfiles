@@ -2,8 +2,11 @@ name: Valgrind
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "42 6 * * 0" # At 0642 every Sunday
+  push:
+    branches:
+      - trunk
+    paths:
+      - 'valgrind/Dockerfile'
 
 permissions: # added using https://github.com/step-security/secure-workflows
   contents: read
