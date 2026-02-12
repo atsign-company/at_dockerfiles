@@ -2,9 +2,9 @@
 # but with SHA pinning rather than version ARG
 
 
-FROM caddy:builder@sha256:fbcbf6ec1f6d94bc85be547a4d46ac32d0d8119baeaffc383dee068ba332cb50 AS builder
+FROM caddy:builder@sha256:01668408cc26e2e00c9d067c30cb43b2ba14ad1f2808beda55503cb2a31f59dc AS builder
 RUN caddy-builder \
     github.com/caddy-dns/digitalocean
 
-FROM caddy:alpine@sha256:7f4c19ed8c32f961644681823de1a2fe5b74c84a45d0f3995286010c84b6c554
+FROM caddy:alpine@sha256:4c6e91c6ed0e2fa03efd5b44747b625fec79bc9cd06ac5235a779726618e530d
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
