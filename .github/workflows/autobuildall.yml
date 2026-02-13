@@ -63,7 +63,7 @@ jobs:
 
       - name: Build and push Multi Arch buildimage
         id: docker_build
-        uses: docker/build-push-action@601a80b39c9405e50806ae38af30926f9d957c47 # v6.19.1
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           file: ./at-buildimage/Dockerfile
           push: true
@@ -101,7 +101,7 @@ jobs:
 
       - name: Build and push dartshowplatform
         id: docker_build_sp
-        uses: docker/build-push-action@601a80b39c9405e50806ae38af30926f9d957c47 # v6.19.1
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           file: ./dartshowplatform/Dockerfile
           push: true
