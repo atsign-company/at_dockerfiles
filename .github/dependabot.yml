@@ -5,6 +5,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
     groups:
       github-actions:
         patterns:
@@ -16,6 +18,8 @@ updates:
       - "/caddy-do-dns/"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
     groups:
       docker:
         patterns:
