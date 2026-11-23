@@ -6,5 +6,5 @@ FROM caddy:builder@sha256:403d237d0bb16d2e62b1f93ca9ebb4953ecbb78aee5986765713a3
 RUN caddy-builder \
     github.com/caddy-dns/digitalocean
 
-FROM caddy:alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f
+FROM caddy:alpine@sha256:003a97808e781aa9f7e75cc2f43d34d461099031faf5e20faefb9f61126836f0
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
